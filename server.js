@@ -4,6 +4,8 @@ const dotenv = require('dotenv');
 const connectDB = require('./src/config/db');
 const bookResolvers = require('./src/resolvers/bookResolvers');
 const bookTypeDefs = require('./src/schemas/bookSchemas');
+const userResolvers = require('./src/resolvers/userResolvers'); // Import user resolvers
+const userTypeDefs = require('./src/schemas/userSchemas');
 const authMiddleware = require('./src/middleware/authMiddleware');
 const errorMiddleware = require('./src/middleware/errorMiddleware');
 
@@ -15,10 +17,17 @@ const app = express();
 // Connect to the database
 connectDB();
 
+// Combine typeDefs and resolvers
+const typeDefs = [bookTypeDefs, userTypeDefs]; // Merge book and user type definitions
+const resolvers = [bookResolvers, userResolvers]; // Merge book and user resolvers
+
 // Create ApolloServer instance
 const server = new ApolloServer({
-    typeDefs: bookTypeDefs,
-    resolvers: bookResolvers,
+    typeDefs,
+    resolvers,
+    context: ({ req }) => ({
+        headers: req.headers, // Pass headers for middleware (e.g., authMiddleware)
+    }),
 });
 
 // Ensure server starts before applying middleware
