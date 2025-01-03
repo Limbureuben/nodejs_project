@@ -7,18 +7,25 @@ const userTypeDefs = gql`
         email: String!
     }
 
+    type RegisterResponse {
+        success: Boolean!
+        message: String!
+        user: User
+    }
+
     input RegisterInput {
         username: String!
         email: String!
         password: String!
     }
 
-    type Query {
-        getUser(id: ID!): User
+    type Mutation {
+        registerUser(input: RegisterInput): RegisterResponse!
     }
 
-    type Mutation {
-        registerUser(input: RegisterInput!): User
+    type Query {
+        getUser(id: ID!): User
+        getAllUsers: [User]
     }
 `;
 

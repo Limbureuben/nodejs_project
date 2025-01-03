@@ -1,12 +1,36 @@
+const errorMiddleware = require('../middleware/errorMiddleware');
 const userService = require('../services/userService');
 
 const userResolvers = {
     Query: {
-        getUser: async (_, { id }) => await userService.getUserById(id),
+        getUser: async (_, { id }) => {
+            const user = await userService.getUserById(id);
+            if(!user) {
+                throw new Error('User not found');
+            }
+            return user;
+        },
+
+        getAllUsers: async () => {
+            const users = await userService.getAllUsers();
+            return users;
+        }
     },
     Mutation: {
-        registerUser: async (_, { input }) => await userService.register(input),
-    },
+        registerUser: async (_, { input }) => {
+            try {
+                const user = await userService.register(input);
+                return {
+                    success: true,
+                    message: 'User registred successfully',
+                    user,
+                };
+            } catch (error) {
+                throw new Error(error.message);
+            }
+        }
+        
+    }
 };
 
 module.exports = userResolvers;
