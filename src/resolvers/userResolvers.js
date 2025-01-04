@@ -19,7 +19,8 @@ const userResolvers = {
     Mutation: {
         registerUser: async (_, { input }) => {
             try {
-                const user = await userService.register(input);
+                const { username, email, password, role } = input;
+                const user = await userService.register({username, email, password, role});
                 return {
                     success: true,
                     message: 'User registred successfully',

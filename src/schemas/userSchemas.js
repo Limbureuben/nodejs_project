@@ -1,10 +1,16 @@
 const { gql } = require('apollo-server-express');
 
 const userTypeDefs = gql`
+    enum Role {
+        admin
+        user
+    }
+
     type User {
         id: ID!
         username: String!
         email: String!
+        role: Role!
     }
 
     type RegisterResponse {
@@ -17,6 +23,7 @@ const userTypeDefs = gql`
         username: String!
         email: String!
         password: String!
+        role: Role
     }
 
     type Mutation {
