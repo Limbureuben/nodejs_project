@@ -13,10 +13,15 @@ const userTypeDefs = gql`
         role: Role!
     }
 
+    type AuthPayload {
+        token: String!
+        user: User!
+    }
+
     type RegisterResponse {
         success: Boolean!
         message: String!
-        user: User
+        user: User!
     }
 
     input RegisterInput {
@@ -26,7 +31,13 @@ const userTypeDefs = gql`
         role: Role
     }
 
+    input LoginInput {
+        username: String!
+        password: String!
+    }
+
     type Mutation {
+        loginUser(input: LoginInput): AuthPayload!
         registerUser(input: RegisterInput): RegisterResponse!
     }
 
