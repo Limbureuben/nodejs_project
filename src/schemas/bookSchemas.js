@@ -15,6 +15,11 @@ const typeDefs = gql`
         getBook(id: ID!): Book
     }
     
+    type Query {
+    
+
+    }
+    
     type Mutation {
         registerBook(
             title: String!
