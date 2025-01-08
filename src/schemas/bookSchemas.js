@@ -8,8 +8,6 @@ const typeDefs = gql`
         publishedYear: Int!
         genre: String!
         available: Boolean!
-        name: string!
-        gender: male!
     }
     
     type Query {
