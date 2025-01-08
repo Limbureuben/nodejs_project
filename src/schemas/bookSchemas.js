@@ -10,10 +10,7 @@ const typeDefs = gql`
         available: Boolean!
     }
     
-    type Query {
-        getBooks: [Book]
-        getBook(id: ID!): Book
-    }
+
     
     type Mutation {
         registerBook(
