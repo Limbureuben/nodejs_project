@@ -1,10 +1,8 @@
-const dotenv = require('dotenv');
-dotenv.config();  // This should be the very first thing
+require('dotenv').config();
 
-// Now you can access environment variables
-const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
+const JWT_KEY = process.env.JWT_KEY;
+console.log('JWT_KEY:', process.env.JWT_KEY);
 
-console.log('JWT_SECRET_KEY:', JWT_SECRET_KEY);
 
 const express = require('express');
 const { ApolloServer, gql } = require('apollo-server-express');

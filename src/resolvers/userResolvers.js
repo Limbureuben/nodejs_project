@@ -1,6 +1,7 @@
 const errorMiddleware = require('../middleware/errorMiddleware');
 const userService = require('../services/userService');
-
+require('dotenv').config({ path: '../../.env' });
+const jwt = require('jsonwebtoken');
 
 const userResolvers = {
     Query: {
@@ -33,21 +34,37 @@ const userResolvers = {
         },
 
         loginUser: async (_, { input }) => {
-             const {username, password} = input;
+            const { username, password } = input;
             try {
-                const user = await userService.login(username, password);
-                if (!user) {
-                    throw new Error ('Invalid username or password');
+                // Get the secret key from the environment variables
+                const jwtSecretKey = process.env.JWT_KEY;
+        
+                // Check if the secret key is available
+                if (!jwtSecretKey) {
+                    throw new Error('JWT_KEY is not defined');
                 }
-
-                const token = jwt.sign(
-                    { userId: user._id, username: user.username, role: user.role }, // Payload
-                    process.env.JWT_SECRET_KEY || 'your-secret-key', // Secret key from environment or default
-                    { expiresIn: '1h' } // Set token expiry time
+        
+                // Attempt to find the user with the provided username and password
+                const user = await userService.login(username, password);
+        
+                // If no user is found, throw an error
+                if (!user) {
+                    throw new Error('Invalid username or password');
+                }
+        
+                // Generate the JWT token
+                const JWT_TOKEN = jwt.sign(
+                    { userId: user._id, username: user.username, role: user.role },
+                    jwtSecretKey,
+                    { expiresIn: '1h' }  // Set token expiration time
                 );
-
+        
+                // Log the generated token for debugging (remove this in production)
+                console.log('Generated JWT Token:', JWT_TOKEN);
+        
+                // Return the token and user details in the response
                 return {
-                    token, 
+                    JWT_TOKEN,  // Returning the token as JWT_TOKEN
                     user: {
                         id: user._id,
                         username: user.username,
@@ -56,12 +73,13 @@ const userResolvers = {
                     }
                 };
             } catch (error) {
-                console.error('Login failed:', error);
+                // Log the error message and throw it
+                console.error('Login failed:', error.message);
                 throw new Error(error.message);
             }
         }
+        
     },
-
 };
 
 module.exports = userResolvers;
