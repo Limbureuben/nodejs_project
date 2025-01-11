@@ -1,4 +1,5 @@
-require('dotenv').config();
+const dotenv = require('dotenv');
+dotenv.config();
 
 const JWT_KEY = process.env.JWT_KEY;
 console.log('JWT_KEY:', process.env.JWT_KEY);

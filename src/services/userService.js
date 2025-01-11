@@ -39,28 +39,28 @@ const login = async (username, password) => {
         throw new Error('Invalid username or password');
     }
 
-    // Log the user to confirm we retrieved the correct one
-    console.log('User retrieved from DB:', user);
+    console.log('User retrieved from the database:', user);
 
-    // Check if the password matches (hashed password comparison)
-    const isMatch = await bcrypt.compare(password, user.password);
-
+    const isMatch = await user.comparePassword(password);
     if (!isMatch) {
-        // If password doesn't match
         throw new Error('Invalid username or password');
     }
 
-    // Generate a JWT token if the username and password are correct
+    // Generate JWT token
     const token = jwt.sign(
         { userId: user._id, username: user.username, role: user.role },
-        JWT_KEY,
-        { expiresIn: '1h' } // Token expires in 1 hour
+        process.env.JWT_KEY,
+        { expiresIn: '1h' }
     );
 
-    // Return user data and token
     return {
         token,
-        user
+        user: {
+            id: user._id,
+            username: user.username,
+            email: user.email,
+            role: user.role,
+        },
     };
 };
 

@@ -36,44 +36,26 @@ const userResolvers = {
         loginUser: async (_, { input }) => {
             const { username, password } = input;
             try {
-                // Get the secret key from the environment variables
+                // Get the JWT secret key
                 const jwtSecretKey = process.env.JWT_KEY;
-        
-                // Check if the secret key is available
                 if (!jwtSecretKey) {
                     throw new Error('JWT_KEY is not defined');
                 }
         
-                // Attempt to find the user with the provided username and password
-                const user = await userService.login(username, password);
+                // Authenticate user
+                const result = await userService.login(username, password);
         
-                // If no user is found, throw an error
-                if (!user) {
-                    throw new Error('Invalid username or password');
+                // If the login function failed to return a token or user, handle it
+                if (!result || !result.token) {
+                    throw new Error('Authentication failed. Token not generated.');
                 }
         
-                // Generate the JWT token
-                const JWT_TOKEN = jwt.sign(
-                    { userId: user._id, username: user.username, role: user.role },
-                    jwtSecretKey,
-                    { expiresIn: '1h' }  // Set token expiration time
-                );
-        
-                // Log the generated token for debugging (remove this in production)
-                console.log('Generated JWT Token:', JWT_TOKEN);
-        
-                // Return the token and user details in the response
+                // Return the token and user
                 return {
-                    JWT_TOKEN,  // Returning the token as JWT_TOKEN
-                    user: {
-                        id: user._id,
-                        username: user.username,
-                        email: user.email,
-                        role: user.role
-                    }
+                    token: result.token, // Ensure this is non-null
+                    user: result.user,   // Ensure this matches the AuthPayload type
                 };
             } catch (error) {
-                // Log the error message and throw it
                 console.error('Login failed:', error.message);
                 throw new Error(error.message);
             }
