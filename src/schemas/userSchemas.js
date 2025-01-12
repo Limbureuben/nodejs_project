@@ -13,7 +13,10 @@ const userTypeDefs = gql`
         role: Role!
     }
 
-
+    type AuthPayload {
+        token: String!
+        user: User!
+    }
 
     type RegisterResponse {
         success: Boolean!
