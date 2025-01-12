@@ -6,7 +6,12 @@ const userTypeDefs = gql`
         user
     }
 
-
+    type User {
+        id: ID!
+        username: String!
+        email: String!
+        role: Role!
+    }
 
     type AuthPayload {
         token: String!
