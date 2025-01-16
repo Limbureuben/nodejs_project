@@ -24,17 +24,7 @@ const userTypeDefs = gql`
         user: User!
     }
 
-    input RegisterInput {
-        username: String!
-        email: String!
-        password: String!
-        role: Role
-    }
 
-    input LoginInput {
-        username: String!
-        password: String!
-    }
 
     type Mutation {
         loginUser(input: LoginInput): AuthPayload!
