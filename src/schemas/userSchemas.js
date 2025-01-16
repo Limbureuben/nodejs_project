@@ -24,6 +24,13 @@ const userTypeDefs = gql`
         user: User!
     }
 
+    input RegisterInput {
+        username: String!
+        email: String!
+        password: String!
+        role: Role
+    }
+
 
 
     type Mutation {
