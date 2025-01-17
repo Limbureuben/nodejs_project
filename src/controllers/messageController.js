@@ -31,3 +31,6 @@ class messageController {
         }
     }
 }
+
+
+module.exports = new messageController();
