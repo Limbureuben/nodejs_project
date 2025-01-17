@@ -24,13 +24,12 @@ class messageController {
 
     async getAllMessages(req, res) {
         try {
-            const messages = await MessagesServics.getAllMessages();
+            const messages = await MessagesService.getAllMessages();
             res.status(200).json(messages);
         } catch (error) {
             return res.status(500).json({ message: error.message});
         }
     }
 }
-
 
 module.exports = new messageController();
