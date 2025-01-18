@@ -1,33 +1,31 @@
 const messageService = require('../services/messageService');
-const { Query } = require('./bookResolvers');
 
 const messageController = {
     Query: {
-        getMessagesByEmail: async (_, {email}) => {
+        getMessagesByEmail: async (_, { email }) => {
             return await messageService.getMessagesByEmail(email);
         },
 
-        allMessage: async () => {
+        allMessages: async () => {
             return await messageService.getAllMessages();
         },
     },
 
     Mutation: {
-        sendMessage: async (_, {input}) => {
+        sendMessage: async (_, { input }) => {
             try {
-                const {email, message, data} = input;
-                const messages =  await messageService.sendnewMessage({email, message, data});
+                const { email, message } = input;
+                const messages = await messageService.sendnewMessage({ email, message });
                 return {
                     success: true,
-                    message: 'message sent successfully',
+                    message: 'Message sent successfully',
                     messages,
                 };
             } catch (error) {
-                throw new Error(error.messages);
+                throw new Error(error.message);
             }
         }
     }
 };
 
-
-module.exports  = messageController;
+module.exports = messageController;

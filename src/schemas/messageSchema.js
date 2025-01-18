@@ -1,29 +1,32 @@
 const { gql } = require('apollo-server-express');
 
-const messageSchema = gql`
+const typeDefs = gql`
     type Message {
         id: ID!
         email: String!
         message: String!
-        data: String!
         createdAt: String!
     }
     
     input SendMessageInput {
-      email: String!
-      message: String!
-      data: String!
-  }
+        email: String!
+        message: String!
+    }
 
-  type Query {
-    messagesByEmail(email: String!): [Message]
-    allMessages: [Message]
-  }
+    type MessageResponse {
+        success: Boolean!
+        message: String!
+        messages: Message!
+    }
 
-  type Mutation {
-    sendMessage(input: SendMessageInput!): Message
-  }
+    type Query {
+        getMessagesByEmail(email: String!): [Message]
+        allMessages: [Message]
+    }
 
+    type Mutation {
+        sendMessage(input: SendMessageInput!): MessageResponse!
+    }
 `;
 
-module.exports = messageSchema;
+module.exports = typeDefs;
