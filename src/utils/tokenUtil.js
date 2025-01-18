@@ -1,15 +1,15 @@
 const jwt = require('jsonwebtoken');
 
-// Secret key for JWT signing and verification (This should be stored securely, e.g., in environment variables)
-const JWT_KEY = process.env.JWT_KEY || 'your-secret-key'; // Don't hard-code this in production!
 
-// Token expiration time (can be adjusted based on your needs)
-const JWT_EXPIRATION_TIME = '1h'; // Token will expire in 1 hour
+const JWT_KEY = process.env.JWT_KEY || 'your-secret-key';
+
+
+const JWT_EXPIRATION_TIME = '1h';
 
 /**
  * Generate JWT Token
- * @param {string} userId - The user ID to encode into the JWT payload
- * @returns {string} - The generated JWT token
+ * @param {string} userId
+ * @returns {string}
  */
 const generateToken = (userId) => {
   return jwt.sign({ userId }, JWT_KEY, { expiresIn: JWT_EXPIRATION_TIME });

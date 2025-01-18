@@ -14,6 +14,9 @@ const userResolvers = require('./src/resolvers/userResolvers'); // Import user r
 const userTypeDefs = require('./src/schemas/userSchemas');
 const authMiddleware = require('./src/middleware/authMiddleware');
 const errorMiddleware = require('./src/middleware/errorMiddleware');
+const messageResolvers = require('./src/resolvers/messageResolvers');
+const messageTypeDefs = require('./src/schemas/messageSchemas');
+
 
 
 const app = express();
@@ -22,8 +25,8 @@ const app = express();
 connectDB();
 
 // Combine typeDefs and resolvers
-const typeDefs = [bookTypeDefs, userTypeDefs]; // Merge book and user type definitions
-const resolvers = [bookResolvers, userResolvers]; // Merge book and user resolvers
+const typeDefs = [bookTypeDefs, userTypeDefs, messageTypeDefs];
+const resolvers = [bookResolvers, userResolvers, messageResolvers];
 
 // Create ApolloServer instance
 const server = new ApolloServer({
@@ -39,7 +42,7 @@ async function startServer() {
     await server.start();
     server.applyMiddleware({ app });
 
-    const port = process.env.PORT || 5000;
+    const port = process.env.PORT || 4000;
     app.use(express.json());
     app.use(errorMiddleware);
 

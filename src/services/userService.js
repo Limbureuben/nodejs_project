@@ -1,6 +1,5 @@
 const User = require('../models/User');
-const bcrypt = require('bcrypt');
-const { generateToken } = require('../utils/tokenUtil');
+const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 require('dotenv').config({ path: '../../.env' });
 
@@ -8,45 +7,44 @@ const register = async ({ username, email, password, role }) => {
     const existingUser = await User.findOne({ email });
     if (existingUser) throw new Error('Email already registered');
 
-    const existingUsername = await User.findOne({username});
-    if (existingUsername) throw new Error('Username alredy exist');
+    const existingUsername = await User.findOne({ username });
+    if (existingUsername) throw new Error('Username already exists');
 
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = new User({ username, email, password: hashedPassword, role: role || 'user', });
-    const savedUser =  await newUser.save();
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
+    console.log('Plaintext Password during registration:', password); // Debugging purpose
+    console.log('Hashed Password during registration:', hashedPassword); // Debugging purpose
+    const newUser = new User({ username, email, password: hashedPassword, role: role || 'customer' });
+    const savedUser = await newUser.save();
+
     return {
         id: savedUser._id,
         username: savedUser.username,
         email: savedUser.email,
         role: savedUser.role,
-    }
-
+    };
 };
-
-const getUserById = async (id) => {
-    return await User.findById(id);
-};
-
-const getAllUsers = async () => {
-    return await User.find().select('id username email role');
-};
-
 
 const login = async (username, password) => {
     const user = await User.findOne({ username });
 
     if (!user) {
+        console.error('User not found:', username);
         throw new Error('Invalid username or password');
     }
 
+    console.log('Plaintext Password during login:', password); // Debugging purpose
     console.log('User retrieved from the database:', user);
+    console.log('Stored Hashed Password:', user.password);
 
-    const isMatch = await user.comparePassword(password);
+    const isMatch = await bcrypt.compare(password, user.password);
+    console.log('Password comparison result:', isMatch);
+
     if (!isMatch) {
+        console.error('Password does not match for user:', username);
         throw new Error('Invalid username or password');
     }
 
-    // Generate JWT token
     const token = jwt.sign(
         { userId: user._id, username: user.username, role: user.role },
         process.env.JWT_KEY,
@@ -64,5 +62,4 @@ const login = async (username, password) => {
     };
 };
 
-
-module.exports = { register, getUserById, getAllUsers, login };
+module.exports = { register, login };
