@@ -18,6 +18,7 @@ const userResolvers = {
             return users;
         }
     },
+    
     Mutation: {
         registerUser: async (_, { input }) => {
             try {

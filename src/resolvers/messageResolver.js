@@ -14,8 +14,17 @@ const messageController = {
 
     Mutation: {
         sendMessage: async (_, {input}) => {
-            const {email, message, data} = input;
-            return await messageService.createMessage({email, message, data});
+            try {
+                const {email, message, data} = input;
+                const messages =  await messageService.sendnewMessage({email, message, data});
+                return {
+                    success: true,
+                    message: 'message sent successfully',
+                    messages,
+                };
+            } catch (error) {
+                throw new Error(error.messages);
+            }
         }
     }
 };

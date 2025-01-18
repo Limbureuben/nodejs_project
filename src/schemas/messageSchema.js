@@ -10,9 +10,9 @@ const messageSchema = gql`
     }
     
     input SendMessageInput {
-    email: String!
-    message: String!
-    data: String!
+      email: String!
+      message: String!
+      data: String!
   }
 
   type Query {

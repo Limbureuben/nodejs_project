@@ -1,22 +1,29 @@
 const Message = require('../models/message');
 
-class MessageService {
-    async createMessage({ email, message}) {
+
+const sendnewMessage =  async ({ email, message}) => {
         const newMessage = new Message({
             email,
             message,
             data
         });
-        return await newMessage.save();
+         const savedMessage = await newMessage.save();
+         return {
+                id: savedMessage._id,
+                email: savedMessage.email,
+                message: savedMessage.message,
+                data: savedMessage.data,
+                createdAt: savedMessage.createdAt,
+        }         
     }
 
-    async getMessagesByEmail(email) {
+const getMessagesByEmail =  async (email) => {
         return await Message.find({ email});
     }
 
-    async getAllMessages() {
+const getAllMessages = async () => {
         return await Message.find();
     }
-}
 
-module.exports = new MessageService();
+
+module.exports = { sendnewMessage, getMessagesByEmail, getAllMessages};
