@@ -66,12 +66,12 @@
 
 
 
-// services/userService.js
 const bcrypt = require('bcrypt');
-const User = require('../models/user');
+const User = require('../models/User');
+const generateToken = require('../utils/generateToken');
 
 const registerUser = async (userData) => {
-    const { username, password, email, role } = userData;
+    const { username, password, email, role = 'customer' } = userData;
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const user = new User({
@@ -81,8 +81,22 @@ const registerUser = async (userData) => {
         role
     });
 
-    await user.save();
-    return user;
+    try {
+        await user.save();
+        const token = generateToken(user._id);
+        return { ...user.toObject(), token };
+    } catch (error) {
+        if (error.code === 11000) {
+            // Handle duplicate key error
+            if (error.keyPattern.username) {
+                throw new Error('Username already exists');
+            }
+            if (error.keyPattern.email) {
+                throw new Error('Email already exists');
+            }
+        }
+        throw error; // Re-throw other errors
+    }
 };
 
 const loginUser = async (username, password) => {
@@ -98,7 +112,8 @@ const loginUser = async (username, password) => {
         throw new Error('Invalid password');
     }
 
-    return user;
+    const token = generateToken(user._id);
+    return { ...user.toObject(), token };
 };
 
 module.exports = {

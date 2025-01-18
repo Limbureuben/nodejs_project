@@ -51,22 +51,31 @@
 
 
 
-// schemas/userSchemas.js
-const Joi = require('joi');
+const { gql } = require('apollo-server-express');
 
-const registerSchema = Joi.object({
-    username: Joi.string().min(3).max(30).required(),
-    password: Joi.string().min(6).required(),
-    email: Joi.string().email().required(),
-    role: Joi.string().valid('admin', 'customer').default('customer')
-});
+const userTypeDefs = gql`
+    type User {
+        id: ID!
+        username: String!
+        email: String!
+        role: String!
+        token: String
+    }
 
-const loginSchema = Joi.object({
-    username: Joi.string().min(3).max(30).required(),
-    password: Joi.string().min(6).required()
-});
+    input RegisterInput {
+        username: String!
+        password: String!
+        email: String!
+        role: String
+    }
 
-module.exports = {
-    registerSchema,
-    loginSchema
-};
+    type Query {
+        login(username: String!, password: String!): User
+    }
+
+    type Mutation {
+        register(input: RegisterInput!): User
+    }
+`;
+
+module.exports = userTypeDefs;

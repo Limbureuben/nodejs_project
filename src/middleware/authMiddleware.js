@@ -1,20 +1,15 @@
-// middleware/authMiddleware.js
-
 // const jwt = require('jsonwebtoken');
 
-// const authMiddleware = (req, res, next) => {
-//   const token = req.headers['authorization'];
-
-//   if (!token) {
-//     return res.status(403).json({ message: 'No token provided!' });
-//   }
+// const authMiddleware = (resolve, root, args, context, info) => {
+//   const token = context.headers.authorization?.split(' ')[1];
+//   if (!token) throw new Error('Unauthorized');
 
 //   try {
-//     const decoded = jwt.verify(token, process.env.JWT_SECRET); // Use your JWT secret here
-//     req.user = decoded;
-//     next(); // Proceed to the next middleware/route handler
+//     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+//     context.user = decoded;
+//     return resolve(root, args, context, info);
 //   } catch (err) {
-//     return res.status(500).json({ message: 'Failed to authenticate token!' });
+//     throw new Error('Invalid token');
 //   }
 // };
 
@@ -22,18 +17,23 @@
 
 
 const jwt = require('jsonwebtoken');
+const User = require('../models/User');
+const JWT_KEY = process.env.JWT_KEY;
 
-const authMiddleware = (resolve, root, args, context, info) => {
-  const token = context.headers.authorization?.split(' ')[1];
-  if (!token) throw new Error('Unauthorized');
+const authMiddleware = async (req, res, next) => {
+    const token = req.headers.authorization?.split(' ')[1];
 
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    context.user = decoded;
-    return resolve(root, args, context, info);
-  } catch (err) {
-    throw new Error('Invalid token');
-  }
+    if (!token) {
+        return res.status(401).json({ message: 'No token, authorization denied' });
+    }
+
+    try {
+        const decoded = jwt.verify(token, JWT_KEY);
+        req.user = await User.findById(decoded.userId).select('-password');
+        next();
+    } catch (err) {
+        res.status(401).json({ message: 'Token is not valid' });
+    }
 };
 
 module.exports = authMiddleware;
