@@ -19,7 +19,7 @@ const registerUser = async (userData) => {
         return { ...user.toObject(), token };
     } catch (error) {
         if (error.code === 11000) {
-            // Handle duplicate key error
+ 
             if (error.keyPattern.username) {
                 throw new Error('Username already exists');
             }
