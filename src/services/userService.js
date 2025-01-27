@@ -27,7 +27,7 @@ const registerUser = async (userData) => {
                 throw new Error('Email already exists');
             }
         }
-        throw error; // Re-throw other errors
+        throw error;
     }
 };
 
