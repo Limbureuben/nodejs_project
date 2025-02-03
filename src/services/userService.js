@@ -48,3 +48,7 @@ const loginUser = async (username, password) => {
     return { ...user.toObject(), token };
 };
 
+module.exports = {
+    registerUser,
+    loginUser
+};
